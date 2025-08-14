@@ -1,3 +1,4 @@
 /venv/
 /fluxtual.egg-info/
 /fluxtual/__pycache__/
+/fluxtual/widgets/__pycache__/

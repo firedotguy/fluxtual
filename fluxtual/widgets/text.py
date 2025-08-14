@@ -1,9 +1,9 @@
 from rich.text import Text as RichText
+from textual.geometry import Size
 from textual.widget import Widget
 from textual.reactive import reactive
 from fluxtual.color import Color, Colors
 from fluxtual.enums import FontStyle, FontWeight, TextAlign, TextDecoration, TextOverflow
-from textwrap import TextWrapper
 from textual import log
 
 def _wrap_line(line: str, width: int) -> list[str]:
@@ -19,10 +19,11 @@ def _wrap_line(line: str, width: int) -> list[str]:
             tail = tail[width:]
             i += 1
         else:
+            lines.append(tail)
             break
     return lines
 
-def wrap_text(text: str, width: int, height: int, soft_wrap: bool = True, overflow: TextOverflow = TextOverflow.clip) -> RichText:
+def wrap_text(text: str, width: int, height: int, soft_wrap: bool = True, overflow: TextOverflow = TextOverflow.clip, fade_overflow_length: int = 1) -> RichText:
     """Custom wrapping functions with overflowing and multiline/singleline support"""
     if width <= 0 or height <= 0:
         return RichText('')
@@ -34,11 +35,12 @@ def wrap_text(text: str, width: int, height: int, soft_wrap: bool = True, overfl
             if overflow == TextOverflow.ellipsis:
                 return RichText(text[:-1] + '…')
             elif overflow == TextOverflow.fade:
-                rich_text = RichText(text[:-1])
-                fade_text = RichText(text[-1])
+                rich_text = RichText(text[:-fade_overflow_length])
+                fade_text = RichText(text[-fade_overflow_length])
                 fade_text.stylize('dim')
-                return rich_text.append(fade_text)
-            return RichText(text)
+                rich_text.append(fade_text)
+                return rich_text
+        return RichText(text)
 
     # custom overflowing with multiline support
     lines = []
@@ -174,7 +176,7 @@ class Text(Widget):
         textual_id: str | None = None,
         textual_classes: str = ''
     ) -> None:
-        """Creates a text widget.
+        """Creates a text widget. Supports 6/17 flutter arguments.
 
         Args:
             data (str): The text to display.
@@ -193,6 +195,13 @@ class Text(Widget):
         self.soft_wrap = soft_wrap
         self.overflow = overflow
         self.max_lines = max_lines
+        self.fade_overflow_length = 1
+
+        self._width = None
+        self._height = None
+        self.styles.height = 'auto'
+        self.styles.width = 'auto'
+        self._given_width = 0
 
     def get_css(self) -> str:
         css = '.fluxtual-text {'
@@ -211,40 +220,21 @@ class Text(Widget):
         if self.max_lines:
             self.styles.max_height = self.max_lines
 
-        # textual wrapping (no multi-line support)
-        # if self.soft_wrap:
-        #     self.styles.text_wrap = 'wrap'
-        # else:
-        #     self.styles.text_wrap = 'nowrap'
-        # if self.overflow:
-        #     if self.overflow == TextOverflow.clip:
-        #         self.styles.text_overflow = 'clip'
-        #         self.styles.overflow_x = 'hidden'
-        #     if self.overflow == TextOverflow.ellipsis:
-        #         self.styles.text_overflow = 'ellipsis'
-        #         self.styles.overflow_x = 'hidden'
-        #     if self.overflow == TextOverflow.visible:
-        #         self.styles.text_overflow = None
-        #         self.styles.overflow_x = 'auto'
-        #     if self.overflow == TextOverflow.fade:
-        #         self.styles.text_overflow = 'clip'
-        #         self.styles.overflow_x = 'hidden'
 
-        # custom wrap
+    def _reflow(self, width, height):
+        self._wrapped = wrap_text(self.content, width, height, self.soft_wrap, self.overflow, self.fade_overflow_length)
+        # set sizes to minimal
+        self._width = max([len(line) for line in self._wrapped.split('\n')])
+        self._height = len(self._wrapped.split('\n'))
+        # self.styles.height = self._height
+        # self.styles.width = self._width
+
+    def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
+        return self._height or 1
+
+    def get_content_width(self, container: Size, viewport: Size) -> int:
+        self._reflow(container.width, container.height)
+        return self._width or len(self.content)
 
     def render(self) -> RichText:
-        # text = self.content
-        # width = self.size.width
-        # if self.overflow != TextOverflow.fade or len(text) < 2 or width >= len(text):
-        #     return text
-
-        # # custom fade overflow
-        # head = text[:width - 1]
-        # tail = text[width - 1:width]
-        # main_text = RichText(head)
-        # if tail:
-        #     fade_text = RichText(tail)
-        #     fade_text.stylize("dim")
-        #     main_text.append(fade_text)
-        # return main_text
-        return wrap_text(self.content, self.size.width, self.size.height, self.soft_wrap, self.overflow)
+        return self._wrapped
