@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fluxtual"
+version = "0.1.0"
+description = "Flutter-like widgets in Textual"
+readme = "README.md"
+authors = [
+  { name = "codeflane", email = "nta16022013@gmail.com" }
+]
+license = "MIT"
+dependencies = ["textual>=5.3.0"]
+requires-python = ">=3.7"
