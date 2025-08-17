@@ -134,13 +134,13 @@ class TextStyle:
         if not other.inherit:
             return other
         return TextStyle(
-            color=self.color or other.color or Colors.white,
-            background_color=self.bg_color or other.bg_color or Colors.black,
-            font_style=self.font_style or other.font_style or FontStyle.normal,
-            font_weight=self.font_weight or other.font_weight or FontWeight.normal,
-            letter_spacing=self.letter_spacing or other.letter_spacing or 0,
-            word_spacing=self.word_spacing or other.word_spacing or 1,
-            decoration=self.decoration or other.decoration or TextDecoration.none
+            color=other.color or self.color or Colors.white,
+            background_color=other.bg_color or self.bg_color or Colors.black,
+            font_style=other.font_style or self.font_style or FontStyle.normal,
+            font_weight=other.font_weight or self.font_weight or FontWeight.normal,
+            letter_spacing=other.letter_spacing or self.letter_spacing or 0,
+            word_spacing=other.word_spacing or self.word_spacing or 1,
+            decoration=other.decoration or self.decoration or TextDecoration.none
         )
 
 
@@ -157,7 +157,7 @@ class TextStyle:
         if self.font_style:
             if self.font_style == FontStyle.italic:
                 text_style.append('italic')
-        return " ".join(text_style) if text_style else None
+        return " ".join(text_style) if text_style else ""
 
     def get_css(self) -> str:
         css = ''
@@ -397,7 +397,6 @@ class Text(StatelessWidget):
     def build(self, context: BuildContext) -> _TextRender:
         default_text_style = DefaultTextStyle.of(context)
         effective_text_style = self.style
-        log(default_text_style.style.color, effective_text_style)
         if self.style == None or self.style.inherit:
             effective_text_style = default_text_style.style.merge(self.style)
 
