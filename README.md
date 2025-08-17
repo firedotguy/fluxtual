@@ -90,9 +90,41 @@ style = TextStyle(
 | **FontStyle**      | `normal`, `italic`                              |
 | **TextDecoration** | `none`, `underline`, `line_through`, `combined` |
 | **TextOverflow**   | `clip`, `ellipsis`, `fade`, `visible`           |
-
 ---
-Soon more widgets! Made 1/~300 Flutter widgets
+
+### Flexible
+A layout widget that controls how its child is laid out within a `Row` or `Column`.
+By default, it takes up a portion of the available space determined by flex, but if `fit=FlexFit.loose`, it only expands if there's free space.
+```python
+from fluxtual.flex import Flexible
+from fluxtual.enums import FlexFit
+from textual.widgets import Static
+
+flexible_widget = Flexible(
+    Static("Short text (loose) – grows only if there is room."),
+    flex=2,
+    fit=FlexFit.loose
+)
+```
+#### Related enums
+| Enum               | Values           |
+| ------------------ | -----------------|
+| **FlexFit**        | `loose`, `tight` |
+---
+
+### Expanded
+A layout widget that forces its child to occupy exactly its allocated flex share in a Row or Column, regardless of the child’s intrinsic size.
+```python
+from fluxtual.flex import Expanded
+from textual.widgets import Static
+
+expanded_widget = Expanded(
+    Static("Expanded fills exactly its fr share."),
+    flex=1
+)
+```
+---
+Soon more widgets! Made 3/~300 Flutter widgets
 
 ## 🛣️ Roadmap
  - [ ] Layouts (e.g `Column`, `Row`, `Stack`, etc.)
@@ -100,7 +132,7 @@ Soon more widgets! Made 1/~300 Flutter widgets
  - [ ] Material 3 widgets (`Buttons`, `Switches`, `Dropdowns`, etc.)
  - [ ] Release to PyPI
  - [ ] Add documentation to readthedocs.io
- - [ ] Improve theme
+ - [ ] Improve theming
 
 ## 📜 License
 This project licensed under [MIT](./LICENSE) License
