@@ -1,9 +1,10 @@
 # from textual.widgets import Static
 # from textual.containers import Horizontal, Vertical, ScrollableContainer
 
-from fluxtual.enums import TextAlign
+from fluxtual.enums import TextAlign, FontWeight, TextDecoration
 from fluxtual.widgets.text import Text, TextStyle
 from fluxtual.widgets.flex import Flexible, Expanded
+from fluxtual.widgets.align import Align, Alignment
 from fluxtual.color import Colors
 from fluxtual.app import MaterialApp
 from fluxtual.widgets.base import StatefulWidget, State
@@ -121,10 +122,10 @@ class FluxtualDemoState(State):
         return MaterialApp(
             theme=ThemeData(
                 text_theme=TextTheme(
-                    body=TextStyle(color=Colors.amber, background_color=Colors.indigo)
+                    body=TextStyle(color=Colors.white, background_color=Colors.blue_accent, font_weight=FontWeight.bold, decoration=TextDecoration.line_through, letter_spacing=0)
                 )
             ),
-            home=Align(Text('Hello ember?', text_align=TextAlign.justify))
+            home=Align(Text('a'), alignment=Alignment(-0.5, 0))
         )
 
 if __name__ == "__main__":

@@ -206,9 +206,9 @@ class TextStyle:
             widget.styles.color = self.color.to_hex()
         if self.bg_color:
             widget.styles.background = self.bg_color.to_hex()
-        if self.word_spacing:
+        if self.word_spacing is not None:
             widget.content = widget.content.replace(' ', ' ' * self.word_spacing)
-        if self.letter_spacing:
+        if self.letter_spacing is not None:
             content = ''
             for i, letter in enumerate(widget.content):
                 if i != len(widget.content) - 1 and match(r'\S', letter) and match(r'\S', widget.content[i + 1]):
@@ -424,6 +424,15 @@ class Text(StatelessWidget):
         self.max_lines = max_lines
         self.textual_id = id
         self.textual_classes = classes
+        self._rendered_text = None
+
+    def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
+        assert self._rendered_text != None, 'Text not rendered yet'
+        return self._rendered_text.get_content_height(container, viewport, width)
+
+    def get_content_width(self, container: Size, viewport: Size) -> int:
+        assert self._rendered_text != None, 'Text not rendered yet'
+        return self._rendered_text.get_content_width(container, viewport)
 
     def build(self, context: BuildContext) -> _TextRender:
         default_text_style = DefaultTextStyle.of(context)
@@ -431,7 +440,7 @@ class Text(StatelessWidget):
         if self.style == None or self.style.inherit:
             effective_text_style = default_text_style.style.merge(self.style)
 
-        return _TextRender(
+        self._rendered_text = _TextRender(
             self.content,
             effective_text_style or TextStyle(),
             self.text_align or default_text_style.text_align or TextAlign.left,
@@ -441,3 +450,4 @@ class Text(StatelessWidget):
             self.textual_id,
             self.textual_classes
         )
+        return self._rendered_text
