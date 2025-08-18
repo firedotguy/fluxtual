@@ -122,10 +122,10 @@ class FluxtualDemoState(State):
         return MaterialApp(
             theme=ThemeData(
                 text_theme=TextTheme(
-                    body=TextStyle(color=Colors.white, background_color=Colors.blue_accent, font_weight=FontWeight.bold, decoration=TextDecoration.line_through, letter_spacing=0)
+                    body=TextStyle(color=Colors.white)
                 )
             ),
-            home=Align(Text('a'), alignment=Alignment(-0.5, 0))
+            home=Text('this text used for test text-align property', text_align=TextAlign.right)
         )
 
 if __name__ == "__main__":

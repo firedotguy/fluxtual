@@ -14,6 +14,7 @@ class TextAlign(Enum):
     right = 'right'
     justify = 'justify'
 
+
 class FontWeight(Enum):
     """The thickness of the glyphs used to draw the text. Supports 4/11 flutter variants."""
     normal = 'w400'

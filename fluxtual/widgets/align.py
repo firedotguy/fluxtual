@@ -2,6 +2,7 @@ from typing import ClassVar
 from textual.geometry import Size
 from textual.widget import Widget
 from textual import log
+from fluxtual.enums import TextAlign
 from fluxtual import _ConstMeta
 
 class AlignmentGeometry:
@@ -176,7 +177,7 @@ class Align(Widget): #in flutter SingleChildRenderObjectWidget -> RenderObjectWi
 
         Args:
             child (Widget): The widget below this widget in the tree.
-            alignment (Alignment, optional): How to align the child.. Defaults to Alignment.center.
+            alignment (Alignment, optional): How to align the child. Defaults to Alignment.center.
             width_factor (float, optional): If non-null, sets its width to the child's width
                 multiplied by this factor. Defaults to None.
             height_factor (float, optional): If non-null, sets its height to the child's height
@@ -230,3 +231,26 @@ class Align(Widget): #in flutter SingleChildRenderObjectWidget -> RenderObjectWi
 
     def compose(self):
         yield self.child
+
+def _text_align_to_alignment(text_align: TextAlign) -> Alignment | None: #flutter hasn't this one, it uses only in fluxtual _TextAlign
+        if text_align == TextAlign.center:
+            return Alignment.top_center
+        elif text_align == TextAlign.left:
+            return Alignment.top_left
+        elif text_align == TextAlign.right:
+            return Alignment.top_right
+        # if its TextAlign.justify, return None
+
+class _TextAlign(Align): #flutter hasn't this one, it uses for align text
+    def __init__(self, child: Widget, text_align: TextAlign = TextAlign.left):
+        super().__init__(child, _text_align_to_alignment(text_align) or Alignment.top_left)
+        self.is_justify = _text_align_to_alignment(text_align) is None
+
+    def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
+        self._reflow(container, viewport)
+        return self.child.get_content_height(container, viewport, width)
+
+    def get_content_width(self, container: Size, viewport: Size) -> int:
+        if self.alignment != Alignment.top_left or self.is_justify:
+            return container.width
+        return self.child.get_content_width(container, viewport)

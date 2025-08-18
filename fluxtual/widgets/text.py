@@ -11,6 +11,7 @@ from fluxtual.enums import FontStyle, FontWeight, TextAlign, TextDecoration, Tex
 from fluxtual.inherited import InheritedTheme
 from fluxtual.widgets.base import BuildContext, _NullWidget, StatelessWidget
 from fluxtual.widgets.builder import Builder
+from fluxtual.widgets.align import _TextAlign
 
 
 def _wrap_line(line: str, width: int) -> list[str]:
@@ -434,7 +435,7 @@ class Text(StatelessWidget):
         assert self._rendered_text != None, 'Text not rendered yet'
         return self._rendered_text.get_content_width(container, viewport)
 
-    def build(self, context: BuildContext) -> _TextRender:
+    def build(self, context: BuildContext) -> _TextAlign:
         default_text_style = DefaultTextStyle.of(context)
         effective_text_style = self.style
         if self.style == None or self.style.inherit:
@@ -450,4 +451,4 @@ class Text(StatelessWidget):
             self.textual_id,
             self.textual_classes
         )
-        return self._rendered_text
+        return _TextAlign(self._rendered_text, self.text_align or TextAlign.left)
