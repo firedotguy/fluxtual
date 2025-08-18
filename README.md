@@ -132,7 +132,7 @@ Soon more widgets! Made 3/~300 Flutter widgets
  - [ ] Material 3 widgets (`Buttons`, `Switches`, `Dropdowns`, etc.)
  - [ ] Release to PyPI
  - [ ] Add documentation to readthedocs.io
- - [ ] Improve theming
+ - [ ] Text direction support
 
 ## 📜 License
 This project licensed under [MIT](./LICENSE) License

@@ -124,7 +124,7 @@ class FluxtualDemoState(State):
                     body=TextStyle(color=Colors.amber, background_color=Colors.indigo)
                 )
             ),
-            home=Expanded(Text('Hello ember?', text_align=TextAlign.center))
+            home=Align(Text('Hello ember?', text_align=TextAlign.justify))
         )
 
 if __name__ == "__main__":

@@ -81,6 +81,32 @@ def wrap_text(text: str, width: int, height: int, soft_wrap: bool = True, overfl
             rich_text.append(line)
     return rich_text
 
+def _justify_line(line: RichText, width: int) -> RichText:
+    """Distribute extra spaces across gaps so that len(line) == width.
+        Skips lines that have no gaps or already match width."""
+    lines = line.split('\n')
+    justified = RichText()
+    for line in lines:
+        spaces = len([i for i in str(line) if i == ' '])
+        if spaces:
+            spacing = 1 + (width - len(line)) // spaces
+            extra = (width - len(line)) % spaces
+            words = [str(word) for word in line.split(' ')]
+            if extra:
+                justified_line = ''
+                for i, word in enumerate(words):
+                    if i == len(words) - 1:
+                        justified_line += word
+                    elif i <= extra:
+                        justified_line += word + ' ' * (spacing + 1)
+                    else:
+                        justified_line += word + ' ' * spacing
+                justified.append(justified_line)
+            else:
+                justified.append((' ' * spacing).join(words))
+        else:
+            justified.append(line)
+    return justified
 
 class TextStyle:
     """An immutable style describing how to format and paint text."""
@@ -341,17 +367,22 @@ class _TextRender(Widget):
 
     def _reflow(self, width, height):
         self._wrapped = wrap_text(self.content, width, height, self.soft_wrap, self.overflow, self.fade_overflow_length)
-        # set sizes to minimal
-        self._width = max([len(line) for line in self._wrapped.split('\n')])
+        # set sizes to minimal if not justify
+        if self.align == TextAlign.justify:
+            self._width = width
+            self._wrapped = _justify_line(self._wrapped, width)
+            log(self._wrapped)
+        else:
+            self._width = max([len(line) for line in self._wrapped.split('\n')])
         self._height = len(self._wrapped.split('\n'))
         # self.styles.height = self._height
         # self.styles.width = self._width
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
+        self._reflow(container.width, container.height)
         return self._height or 1
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
-        self._reflow(container.width, container.height)
         return self._width or len(self.content)
 
     def render(self) -> RichText:
