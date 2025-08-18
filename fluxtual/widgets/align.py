@@ -208,13 +208,11 @@ class Align(Widget): #in flutter SingleChildRenderObjectWidget -> RenderObjectWi
             container_height = child_height * self.height_factor
         if self.width_factor is not None:
             container_width = child_width * self.width_factor
-        log(child_height, child_width)
 
         free_width = max(0, container_width - child_width)
         free_height = max(0, container_height - child_height)
         left_margin = round(free_width * (self.alignment.x + 1) * 0.5)
         top_margin = round(free_height * (self.alignment.y + 1) * 0.5)
-        log(top_margin, left_margin)
 
         self.child.styles.margin = (top_margin, 0, 0, left_margin)
 

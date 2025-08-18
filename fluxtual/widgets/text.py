@@ -82,12 +82,11 @@ def wrap_text(text: str, width: int, height: int, soft_wrap: bool = True, overfl
             rich_text.append(line)
     return rich_text
 
-def _justify_line(line: RichText, width: int) -> RichText:
-    """Distribute extra spaces across gaps so that len(line) == width.
+def _justify_line(text: RichText, width: int) -> RichText:
+    """Distribute extra spaces across gaps so that len(text) == width.
         Skips lines that have no gaps or already match width."""
-    lines = line.split('\n')
     justified = RichText()
-    for line in lines:
+    for line in text.split('\n'):
         spaces = len([i for i in str(line) if i == ' '])
         if spaces:
             spacing = 1 + (width - len(line)) // spaces
@@ -98,15 +97,16 @@ def _justify_line(line: RichText, width: int) -> RichText:
                 for i, word in enumerate(words):
                     if i == len(words) - 1:
                         justified_line += word
-                    elif i <= extra:
-                        justified_line += word + ' ' * (spacing + 1)
                     else:
-                        justified_line += word + ' ' * spacing
+                        justified_line += word + ' ' * (spacing + (1 if i < extra else 0))
                 justified.append(justified_line)
             else:
                 justified.append((' ' * spacing).join(words))
         else:
             justified.append(line)
+
+    # assert len(justified) == width, 'Justified text length is not equals width. Please open issue\
+#  in https://github.com/firedotguy/fluxtual/issues/ (you should not see this error)'
     return justified
 
 class TextStyle:
@@ -360,8 +360,6 @@ class _TextRender(Widget):
         self.style.apply(self)
 
         self.overflow = self.overflow or self.style.overflow
-        if self.align:
-            self.styles.text_align = self.align.value
         if self.max_lines:
             self.styles.max_height = self.max_lines
 
@@ -372,7 +370,7 @@ class _TextRender(Widget):
         if self.align == TextAlign.justify:
             self._width = width
             self._wrapped = _justify_line(self._wrapped, width)
-            log(self._wrapped)
+            log(len(self._wrapped), width)
         else:
             self._width = max([len(line) for line in self._wrapped.split('\n')])
         self._height = len(self._wrapped.split('\n'))

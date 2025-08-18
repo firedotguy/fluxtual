@@ -125,7 +125,7 @@ class FluxtualDemoState(State):
                     body=TextStyle(color=Colors.white)
                 )
             ),
-            home=Text('this text used for test text-align property', text_align=TextAlign.right)
+            home=Text('this text used for test', text_align=TextAlign.justify)
         )
 
 if __name__ == "__main__":
