@@ -45,7 +45,6 @@ class _MaterialAppState(State["MaterialApp"]):
 
 class MaterialApp(StatefulWidget):
     """Root container that provides ThemeData to the subtree."""
-    # DEFAULT_CSS = '''Align {background: red;}''' #highlight align
     def __init__(
             self,
             home: Widget,

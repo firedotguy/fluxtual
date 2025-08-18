@@ -124,7 +124,60 @@ expanded_widget = Expanded(
 )
 ```
 ---
-Soon more widgets! Made 3/~300 Flutter widgets
+
+### Align
+Positions a single child within itself using Flutter-like `Alignment`.
+Optionally sizes itself to a multiple of the child via `width_factor` / `height_factor`.
+```python
+from fluxtual.geometry.alignment import Alignment
+from fluxtual.widgets.align import Align
+from fluxtual.widgets.text import Text
+
+# Center a text
+aligned = Align(
+    child=Text("Centered"),
+    alignment=Alignment.center,
+)
+
+# Bottom-right, container size collapses to 1.5x child width and 2x child height
+compact = Align(
+    child=Text("Bottom Right"),
+    alignment=Alignment.bottom_right,
+    width_factor=1.5,
+    height_factor=2.0,
+)
+```
+#### Alignment
+Alignment(x, y) uses normalized coordinates in the range [-1.0, 1.0]:
+
+ - x = -1 → left, 0 → center, 1 → right
+ - y = -1 → top, 0 → center, 1 → bottom
+
+Predefined constants:
+| Name                      | Value          |
+| ------------------------- | -------------- |
+| `Alignment.top_left`      | `(-1.0, -1.0)` |
+| `Alignment.top_center`    | `(0.0, -1.0)`  |
+| `Alignment.top_right`     | `(1.0, -1.0)`  |
+| `Alignment.center_left`   | `(-1.0, 0.0)`  |
+| `Alignment.center`        | `(0.0, 0.0)`   |
+| `Alignment.center_right`  | `(1.0, 0.0)`   |
+| `Alignment.bottom_left`   | `(-1.0, 1.0)`  |
+| `Alignment.bottom_center` | `(0.0, 1.0)`   |
+| `Alignment.bottom_right`  | `(1.0, 1.0)`   |
+You can also create custom alignments:
+```python
+custom = Align(
+    child=Text("Custom"),
+    alignment=Alignment(0.25, -0.75),  # slightly right of left, near the top
+)
+```
+##### Sizing behavior
+ - Stretch (default): If width_factor/height_factor are None, Align expands to the available space (behaves like a full-size container) and positions the child within it.
+ - Shrink (factor mode): If a factor is provided, Align reports its own content size as child_size * factor along that axis, effectively collapsing to a size relative to its child (Flutter-like behavior).
+
+---
+Soon more widgets! Made 4/~300 Flutter widgets
 
 ## 🛣️ Roadmap
  - [ ] Layouts (e.g `Column`, `Row`, `Stack`, etc.)
