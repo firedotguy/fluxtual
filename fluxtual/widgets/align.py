@@ -199,7 +199,7 @@ class Align(Widget): #in flutter SingleChildRenderObjectWidget -> RenderObjectWi
     def _reflow(self, container_size, viewport):
         #use variables instead of textual size because we need to changes it (textual don't allows it idk why)
         child_width = self.child.get_content_width(container_size, viewport)
-        child_height = self.child.get_content_height(container_size, viewport, 0)
+        child_height = self.child.get_content_height(container_size, viewport, child_width)
         container_width = container_size.width
         container_height = container_size.height
 
@@ -220,12 +220,19 @@ class Align(Widget): #in flutter SingleChildRenderObjectWidget -> RenderObjectWi
         self._reflow(container, viewport)
         if self.height_factor is None:
             return container.height
-        return round(self.child.size.height * self.height_factor)
+        return round(
+            self.child.get_content_height(
+                container,
+                viewport,
+                self._child_width or self.child.get_content_width(container, viewport))
+            * self.height_factor
+        )
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
         if self.width_factor is None:
             return container.width
-        return round(self.child.size.width * self.width_factor)
+        self._child_width = self.child.get_content_width(container, viewport) #for use in get_content_height
+        return round(self._child_width * self.width_factor)
 
     def compose(self):
         yield self.child

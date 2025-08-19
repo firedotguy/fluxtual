@@ -370,7 +370,6 @@ class _TextRender(Widget):
         if self.align == TextAlign.justify:
             self._width = width
             self._wrapped = _justify_line(self._wrapped, width)
-            log(len(self._wrapped), width)
         else:
             self._width = max([len(line) for line in self._wrapped.split('\n')])
         self._height = len(self._wrapped.split('\n'))
