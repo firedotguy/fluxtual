@@ -1,4 +1,6 @@
 # fluxtual
+![License](https://img.shields.io/github/license/firedotguy/fluxtual) ![GitHub last commit](https://img.shields.io/github/last-commit/firedotguy/fluxtual) ![GitHub issues](https://img.shields.io/github/issues/firedotguy/fluxtual) ![GitHub Repo stars](https://img.shields.io/github/stars/codeFlane/fluxtual?style=social) ![Platform](https://img.shields.io/badge/platform-Terminal-blue) ![Textual](https://img.shields.io/badge/powered%20by-Textual-purple)
+
 `fluxtual` brings a **Flutter-inspired API** to [Textual](https://github.com/Textualize/textual), aiming to provide a familiar, expressive, and scalable way to build terminal UIs.  
 It includes a **theme system**, ready-to-use widgets, strongly typed enums for styling, and utilities for layout and text rendering.
 
@@ -176,8 +178,34 @@ custom = Align(
  - Stretch (default): If width_factor/height_factor are None, Align expands to the available space (behaves like a full-size container) and positions the child within it.
  - Shrink (factor mode): If a factor is provided, Align reports its own content size as child_size * factor along that axis, effectively collapsing to a size relative to its child (Flutter-like behavior).
 
+### Center
+A convenience widget that centers its single child within itself.
+Functionally equivalent to Align(alignment=Alignment.center) with optional width_factor / height_factor.
+```python
+from fluxtual.widgets.center import Center
+from fluxtual.widgets.text import Text
+
+# Center a text within available space
+centered = Center(
+    child=Text("Hello, Fluxtual!")
+)
+```
+
 ---
-Soon more widgets! Made 4/~300 Flutter widgets
+### Builder
+A widget that defers the creation of its child to a builder function.
+Useful when you need to rebuild UI based on context or want to construct widgets lazily.
+```
+from fluxtual.widgets.builder import Builder
+from fluxtual.widgets.text import Text
+
+# Simple usage: build a text dynamically
+builder = Builder(
+    builder=lambda context: Text(f"Hello from {context.app.title}")
+)
+```
+
+Soon more widgets! Made 6/~300 Flutter widgets
 
 ## 🛣️ Roadmap
  - [ ] Layouts (e.g `Column`, `Row`, `Stack`, etc.)

@@ -172,7 +172,7 @@ class Align(Widget): #in flutter SingleChildRenderObjectWidget -> RenderObjectWi
         height_factor: float | None = None,
         id: str | None = None,
         classes: str = ''
-    ):
+    ) -> None:
         """Creates an alignment widget. Supports 4/4 flutter arguments.
 
         Args:
@@ -230,6 +230,23 @@ class Align(Widget): #in flutter SingleChildRenderObjectWidget -> RenderObjectWi
     def compose(self):
         yield self.child
 
+class Center(Align):
+    """A widget that centers its child within itself."""
+    def __init__(
+            self,
+            child: Widget,
+            id: str | None = None,
+            classes: str = ''
+        ) -> None:
+        """Creates a widget that centers its child.
+
+        Args:
+            child (Widget): The widget below this widget in the tree.
+            id (str, optional): textual CSS id. Defaults to None.
+            classes (str, optional): textual CSS classes. Defaults to ''.
+        """
+        super().__init__(child, Alignment.center, None, None, id, classes)
+
 def _text_align_to_alignment(text_align: TextAlign) -> Alignment | None: #flutter hasn't this one, it uses only in fluxtual _TextAlign
         if text_align == TextAlign.center:
             return Alignment.top_center
@@ -240,6 +257,7 @@ def _text_align_to_alignment(text_align: TextAlign) -> Alignment | None: #flutte
         # if its TextAlign.justify, return None
 
 class _TextAlign(Align): #flutter hasn't this one, it uses for align text
+    """Custom wrapper to align text"""
     def __init__(self, child: Widget, text_align: TextAlign = TextAlign.left):
         super().__init__(child, _text_align_to_alignment(text_align) or Alignment.top_left)
         self.is_justify = _text_align_to_alignment(text_align) is None
