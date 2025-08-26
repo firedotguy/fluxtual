@@ -1,4 +1,4 @@
-from typing import Generic, Any, TypeVar, cast
+from typing import Generic, TypeVar, cast
 
 from textual.widget import Widget
 from textual.app import ComposeResult

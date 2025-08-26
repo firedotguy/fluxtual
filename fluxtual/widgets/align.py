@@ -1,7 +1,6 @@
 from typing import ClassVar
 from textual.geometry import Size
 from textual.widget import Widget
-from textual import log
 from fluxtual.enums import TextAlign
 from fluxtual import _ConstMeta
 
@@ -15,18 +14,6 @@ class AlignmentGeometry:
         """Abstract const constructor. This constructor enables subclasses to provide const
             constructors so that they can be used in const expressions."""
         pass
-
-    @property
-    def x(self) -> float:
-        return self._x
-
-    @property
-    def y(self) -> float:
-        return self._y
-
-    @property
-    def start(self):
-        return self._start
 
     @classmethod
     def xy(cls, x: float, y: float) -> 'Alignment':
@@ -58,23 +45,33 @@ class AlignmentGeometry:
         ...
 
     def __eq__(self, other: object) -> bool:
-        return other is AlignmentGeometry and other._x == self._x and other._start == self._start and other._y == self._y
+        return isinstance(other, AlignmentGeometry) and other._x == self._x and other._start == self._start and other._y == self._y
 
 class Alignment(AlignmentGeometry, metaclass=_ConstMeta):
     """A point within a rectangle."""
-    def __init__(self, x: float, y: float):
+    x: float
+    y: float
+    def __init__(self, x: float, y: float) -> None:
         """Creates an alignment. Supports 2/2 flutter arguments.
 
         Args:
             x (float): The distance fraction in the horizontal direction.
             y (float): The distance fraction in the vertical direction.
         """
-        self._x = x
-        self._y = y
+        self.x = x
+        self.y = y
 
     @property
-    def start(self) -> float:
+    def _start(self) -> float:
         return 0.0
+
+    @property
+    def _x(self) -> float:
+        return self.x
+
+    @property
+    def _y(self) -> float:
+        return self.y
 
     def resolve(self) -> 'Alignment':
         """Convert this instance into an `Alignment`, which uses literal coordinates (the `x`

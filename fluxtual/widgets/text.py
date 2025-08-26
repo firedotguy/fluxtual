@@ -373,11 +373,10 @@ class _TextRender(Widget):
         else:
             self._width = max([len(line) for line in self._wrapped.split('\n')])
         self._height = len(self._wrapped.split('\n'))
-        # self.styles.height = self._height
-        # self.styles.width = self._width
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
-        self._reflow(container.width, container.height)
+        if container != Size(0, 0):
+            self._reflow(container.width, container.height)
         return self._height or 1
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
@@ -423,14 +422,29 @@ class Text(StatelessWidget):
         self.textual_id = id
         self.textual_classes = classes
         self._rendered_text = None
+        self.styles.width = 'auto'
+        self.styles.height = 'auto'
 
-    def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
-        assert self._rendered_text != None, 'Text not rendered yet'
-        return self._rendered_text.get_content_height(container, viewport, width)
+    def _measure_text(self, container: Size, viewport: Size, width: int|None=None) -> tuple[int,int]:
+        w = width or (container.width or len(self.content))
+        h = container.height or 1
+        wrapped = wrap_text(self.content, w, h, self.soft_wrap, self.overflow, 1)
+        lines = wrapped.split("\n")
+        text_width = max((len(line) for line in lines), default=0)
+        text_height = len(lines)
+        return text_width, text_height
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
-        assert self._rendered_text != None, 'Text not rendered yet'
-        return self._rendered_text.get_content_width(container, viewport)
+        if self._rendered_text:
+            return self._rendered_text.get_content_width(container, viewport)
+        text_width, _ = self._measure_text(container, viewport)
+        return text_width
+
+    def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
+        if self._rendered_text:
+            return self._rendered_text.get_content_height(container, viewport, width)
+        _, text_height = self._measure_text(container, viewport, width)
+        return text_height
 
     def build(self, context: BuildContext) -> _TextAlign:
         default_text_style = DefaultTextStyle.of(context)

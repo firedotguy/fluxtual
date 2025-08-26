@@ -1,15 +1,11 @@
-# from textual.widgets import Static
-# from textual.containers import Horizontal, Vertical, ScrollableContainer
-
-from fluxtual.enums import TextAlign, FontWeight, TextDecoration
+from fluxtual.enums import *
 from fluxtual.widgets.text import Text, TextStyle
-from fluxtual.widgets.flex import Flexible, Expanded
-from fluxtual.widgets.align import Align, Alignment, Center
+from fluxtual.widgets.layouts import Flex
 from fluxtual.color import Colors
 from fluxtual.app import MaterialApp
 from fluxtual.widgets.base import StatefulWidget, State
 from fluxtual.theme import ThemeData, TextTheme
-from fluxtual import run
+from fluxtual import run_app
 
 
 class FluxtualDemo(StatefulWidget):
@@ -24,12 +20,24 @@ class FluxtualDemoState(State):
                     body=TextStyle(color=Colors.white)
                 )
             ),
-            home=Align(Text('this text used for test'), height_factor=1.5, width_factor=2, alignment=Alignment.center)
+            home=Flex(
+                direction=Axis.horizontal,
+                main_axis_alignment=MainAxisAlignment.space_between,
+                children=[
+                    Text('this text used for test'),
+                    Text('Text number two'),
+                    Text('Text number three')
+                ]
+            )
         )
 
+
 if __name__ == "__main__":
-    run(FluxtualDemo(), CSS = """
-Align {
+    run_app(FluxtualDemo(), CSS = """
+Flex {
+    background: darkblue;
+}
+Text {
     background: red;
 }
 """)

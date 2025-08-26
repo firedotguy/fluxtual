@@ -83,6 +83,12 @@ style = TextStyle(
     decoration=TextDecoration.underline
 )
 ```
+#### Theming behavior
+
+Text picks up defaults from DefaultTextStyle provided by MaterialApp’s theme.
+ - If a Text has its own style with inherit=True (default), Fluxtual merges it with the theme’s style.
+ - If inherit=False, the widget uses only its own TextStyle.
+
 
 #### Related enums
 | Enum               | Values                                          |
@@ -92,6 +98,28 @@ style = TextStyle(
 | **FontStyle**      | `normal`, `italic`                              |
 | **TextDecoration** | `none`, `underline`, `line_through`, `combined` |
 | **TextOverflow**   | `clip`, `ellipsis`, `fade`, `visible`           |
+---
+
+### MaterialApp
+A top-level application widget that wires up theming and establishes a root for your Fluxtual widget tree.
+Use it to provide a `ThemeData` (colors + text styles) and a home widget to render.
+```python
+from fluxtual.app import MaterialApp
+from fluxtual.theme import ThemeData, TextTheme, ColorScheme
+from fluxtual.widgets.text import Text, TextStyle
+from fluxtual.color import Colors
+
+app = MaterialApp(
+    theme=ThemeData(
+        color_scheme=ColorScheme.dark(),         # or ColorScheme.light(...)
+        text_theme=TextTheme(
+            body=TextStyle(color=Colors.white),
+            title=TextStyle(color=Colors.amber)
+        ),
+    ),
+    home=Text("Hello Fluxtual!")
+)
+```
 ---
 
 ### Flexible
@@ -167,6 +195,7 @@ Predefined constants:
 | `Alignment.bottom_left`   | `(-1.0, 1.0)`  |
 | `Alignment.bottom_center` | `(0.0, 1.0)`   |
 | `Alignment.bottom_right`  | `(1.0, 1.0)`   |
+
 You can also create custom alignments:
 ```python
 custom = Align(
@@ -208,12 +237,25 @@ builder = Builder(
 Soon more widgets! Made 6/~300 Flutter widgets
 
 ## 🛣️ Roadmap
- - [ ] Layouts (e.g `Column`, `Row`, `Stack`, etc.)
- - [ ] Animations support
- - [ ] Material 3 widgets (`Buttons`, `Switches`, `Dropdowns`, etc.)
+ - [x] 1 widget
+ - [x] 3 widgets
+ - [x] 5 widgets
+ - [ ] 10 widgets
+ - [ ] 20 widgets
  - [ ] Release to PyPI
+ - [ ] 50 widgets
  - [ ] Add documentation to readthedocs.io
+ - [ ] 100 widgets
+ - [ ] 200 widgets
+
+### Planning features
  - [ ] Text direction support
+ - [ ] Animations
+ - [ ] SnackBars
+ - [ ] Text.rich/TextSpan/InlineSpan support
+ - [ ] Canvas widget support (CircularProgressIndicator, Divider, etc.)
+ - [ ] Radius support (ClipRRect widget, border_radius argument)
+
 
 ## 📜 License
 This project licensed under [MIT](./LICENSE) License

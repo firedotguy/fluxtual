@@ -79,6 +79,9 @@ class MainAxisAlignment(Enum):
         elif self == MainAxisAlignment.space_evenly:
             return (free_space // (item_count + 1), free_space // (item_count + 1) + spacing)
 
+        elif self == MainAxisAlignment.end:
+            return (0, spacing) if flipped else (free_space, spacing)
+
         else:
             raise ValueError(f'Unknown MainAxisAlignment value: {self.value}')
 
@@ -88,6 +91,21 @@ class CrossAxisAlignment(Enum):
     center = 'center'
     end = 'end'
     stretch = 'stretch'
+
+    def _get_child_cross_axis_offest(self, free_space: int, flipped: bool = False) -> int:
+        """Get cross axis offset before children.  
+        **difference from flutter:** `/` replaced to `//` because textual avoid float values (only int dimensions)
+        """
+        if self == CrossAxisAlignment.stretch:
+            return 0
+        elif self == CrossAxisAlignment.start:
+            return free_space if flipped else 0
+        elif self == CrossAxisAlignment.center:
+            return free_space // 2
+        elif self == CrossAxisAlignment.end:
+            return 0 if flipped else free_space
+        else:
+            raise ValueError(f'Unknown CrossAxisAlignment value: {self.value}')
 
 class MainAxisSize(Enum):
     """How much space should be occupied in the main axis."""
