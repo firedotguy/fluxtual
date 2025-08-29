@@ -1,5 +1,5 @@
 ## [0.2.0] Flex
- - Added `Flex` widget
+ - Added `Flex`, `Column` and `Row` widgets
  - Fix `Alignment` equalition
  - Added `utils` module
  - Added `flip_axis` util

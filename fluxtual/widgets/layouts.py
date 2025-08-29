@@ -181,3 +181,90 @@ class Flex(Widget):
 
     def compose(self) -> ComposeResult:
         yield from self._children
+
+
+class Column(Flex):
+    """A widget that displays its children in a vertical array."""
+    def __init__(
+        self,
+        main_axis_alignment: MainAxisAlignment = MainAxisAlignment.start,
+        main_axis_size: MainAxisSize = MainAxisSize.max,
+        cross_axis_alignment: CrossAxisAlignment = CrossAxisAlignment.center,
+        vertical_direction: VerticalDirection = VerticalDirection.down,
+        spacing: int = 0,
+        children: list[Widget] = [],
+        id: str | None = None,
+        classes: str = ''
+    ):
+        """Creates a vertical array of children. Supports 6/8 flutter arguments.
+
+        Args:
+            direction (Axis): The direction to use as the main axis.
+            main_axis_alignment (MainAxisAlignment, optional): How the children should be placed
+                along the main axis. Defaults to MainAxisAlignment.start.
+            main_axis_size (MainAxisSize, optional): How much space should be occupied in the main
+                axis. Defaults to MainAxisSize.max.
+            cross_axis_alignment (CrossAxisAlignment, optional): How the children should be placed
+                along the cross axis. Defaults to CrossAxisAlignment.center.
+            vertical_direction (VerticalDirection, optional): Determines the order to lay children
+                out vertically and how to interpret `start` and `end` in the vertical direction.
+                Defaults to VerticalDirection.down.
+            spacing (int, optional): How much space to place between children in the main axis. Defaults to 0.
+            children (list[Widget], optional): The widgets below this widget in the tree. Defaults to [].
+            id (str, optional): Textual CSS id. Defaults to None.
+            classes (str, optional): Textual CSS classes. Defaults to ''.
+        """
+        super().__init__(
+            direction=Axis.vertical,
+            main_axis_alignment=main_axis_alignment,
+            main_axis_size=main_axis_size,
+            cross_axis_alignment=cross_axis_alignment,
+            vertical_direction=vertical_direction,
+            spacing=spacing,
+            children=children,
+            id=id,
+            classes=classes
+        )
+
+class Row(Flex):
+    """A widget that displays its children in a horizontal array."""
+    def __init__(
+        self,
+        main_axis_alignment: MainAxisAlignment = MainAxisAlignment.start,
+        main_axis_size: MainAxisSize = MainAxisSize.max,
+        cross_axis_alignment: CrossAxisAlignment = CrossAxisAlignment.center,
+        vertical_direction: VerticalDirection = VerticalDirection.down,
+        spacing: int = 0,
+        children: list[Widget] = [],
+        id: str | None = None,
+        classes: str = ''
+    ):
+        """Creates a horizontal array of children. Supports 6/8 flutter arguments.
+
+        Args:
+            direction (Axis): The direction to use as the main axis.
+            main_axis_alignment (MainAxisAlignment, optional): How the children should be placed
+                along the main axis. Defaults to MainAxisAlignment.start.
+            main_axis_size (MainAxisSize, optional): How much space should be occupied in the main
+                axis. Defaults to MainAxisSize.max.
+            cross_axis_alignment (CrossAxisAlignment, optional): How the children should be placed
+                along the cross axis. Defaults to CrossAxisAlignment.center.
+            vertical_direction (VerticalDirection, optional): Determines the order to lay children
+                out vertically and how to interpret `start` and `end` in the vertical direction.
+                Defaults to VerticalDirection.down.
+            spacing (int, optional): How much space to place between children in the main axis. Defaults to 0.
+            children (list[Widget], optional): The widgets below this widget in the tree. Defaults to [].
+            id (str, optional): Textual CSS id. Defaults to None.
+            classes (str, optional): Textual CSS classes. Defaults to ''.
+        """
+        super().__init__(
+            direction=Axis.vertical,
+            main_axis_alignment=main_axis_alignment,
+            main_axis_size=main_axis_size,
+            cross_axis_alignment=cross_axis_alignment,
+            vertical_direction=vertical_direction,
+            spacing=spacing,
+            children=children,
+            id=id,
+            classes=classes
+        )

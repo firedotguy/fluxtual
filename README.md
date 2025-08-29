@@ -224,7 +224,7 @@ centered = Center(
 ### Builder
 A widget that defers the creation of its child to a builder function.
 Useful when you need to rebuild UI based on context or want to construct widgets lazily.
-```
+```python
 from fluxtual.widgets.builder import Builder
 from fluxtual.widgets.text import Text
 
@@ -234,7 +234,63 @@ builder = Builder(
 )
 ```
 
-Soon more widgets! Made 6/~300 Flutter widgets
+---
+### Flex
+A widget that displays its children in a one-dimensional array.
+```python
+from fluxtual.widgets.layouts import Flex
+from fluxtual.widgets.text import Text
+from fluxtual.enums import MainAxisAlignment, Axis
+
+flex = Flex(
+    axis=Axis.horizontal,
+    main_axis_alignment=MainAxisAlignment.center,
+    spacing=5,
+    children=[
+        Text('Centered text'),
+        Text('and one more!')
+    ]
+)
+```
+
+---
+### Column
+A widget that displays its children in a vertical array.
+```python
+from fluxtual.widgets.layouts import Column
+from fluxtual.widgets.text import Text
+from fluxtual.enums import MainAxisAlignment, Axis
+
+column = Column(
+    main_axis_alignment=MainAxisAlignment.space_between,
+    children=[
+        Text('text from left'),
+        Text('text from center'),
+        Text('text from right')
+    ]
+)
+```
+
+---
+### Row
+A widget that displays its children in a horizontal array.
+```python
+from fluxtual.widgets.layouts import Row
+from fluxtual.widgets.text import Text
+from fluxtual.enums import MainAxisAlignment, Axis, CrossAxisAlignment
+
+row = Row(
+    main_axis_alignment=MainAxisAlignment.space_evenly,
+    cross_axis_alignment=CrossAxisAlignment.end
+    spacing=5,
+    children=[
+        Text('Supports main and'),
+        Text('and cross alignments'),
+        Text('even with spacing')
+    ]
+)
+```
+Soon more widgets! Made 9/~300 Flutter widgets
 
 ## 🛣️ Roadmap
  - [x] 1 widget
