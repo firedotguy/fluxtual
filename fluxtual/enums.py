@@ -71,7 +71,7 @@ class MainAxisAlignment(Enum):
             return (free_space // 2, spacing)
 
         elif self == MainAxisAlignment.space_between:
-            return (0, free_space // (item_count - 1) + spacing)
+            return (0, free_space // (item_count - 1) + spacing) #TODO: add remainder (now space between can leave extra pixels at the end)
 
         elif self == MainAxisAlignment.space_around:
             return (free_space // item_count // 2, free_space // item_count + spacing)

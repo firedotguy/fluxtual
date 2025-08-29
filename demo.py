@@ -22,7 +22,10 @@ class FluxtualDemoState(State):
             ),
             home=Flex(
                 direction=Axis.horizontal,
-                main_axis_alignment=MainAxisAlignment.space_between,
+                # main_axis_size=MainAxisSize.min,
+                main_axis_alignment=MainAxisAlignment.end,
+                # cross_axis_alignment=CrossAxisAlignment.end,
+                spacing=1,
                 children=[
                     Text('this text used for test'),
                     Text('Text number two'),

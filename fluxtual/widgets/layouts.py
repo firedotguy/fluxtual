@@ -5,13 +5,16 @@ from textual.widget import Widget
 from textual.containers import Container #TODO: replace to our SizedBox (on ready)
 from fluxtual.enums import Axis, MainAxisAlignment, MainAxisSize, CrossAxisAlignment, VerticalDirection
 from fluxtual.utils import flip_axis
+from asyncio import sleep
 
-def _create_spacing_box(direction: Axis, spacing: int = 0) -> Container:
+def _create_spacing_box(direction: Axis, spacing: int = 0, cross_spacing: int = 0) -> Container:
     spacing_box = Container(classes='fluxtual-spacing-box')
     if direction == Axis.horizontal:
         spacing_box.styles.width = spacing
+        spacing_box.styles.height = cross_spacing
     else:
         spacing_box.styles.height = spacing
+        spacing_box.styles.width = cross_spacing
     return spacing_box
 
 class Flex(Widget):
@@ -54,14 +57,15 @@ class Flex(Widget):
         self.vertical_direction = vertical_direction
         self.spacing = spacing
         self._children = children
-        self._host = Container()
 
-        self._host.styles.layout = "horizontal" if self.direction == Axis.horizontal else "vertical"
+        self.styles.layout = "horizontal" if self.direction == Axis.horizontal else "vertical"
         self.styles.width = 'auto'
         self.styles.height = 'auto'
 
         self._width = None
         self._height = None
+
+        self._laid_out = False
 
     def _apply_between_space(self, spacing: int) -> None:
         children = []
@@ -69,26 +73,42 @@ class Flex(Widget):
             if child.classes == 'fluxtual-spacing-box':
                 continue
             children.append(child)
-            if i != len(self._children) - 1 and i != 0:
+            if i != len(self._children) - 1:
                 children.append(_create_spacing_box(self.direction, spacing))
         self._children = children
-        log('between', spacing)
 
-    def _apply_leading_space(self, spacing: int, direction: Axis = Axis.horizontal) -> None:
-        if len(self._children) > 0:
-            if self._children[0].classes == 'fluxtual-spacing-box':
-                self._children.pop(0)
-        self._children.insert(0, _create_spacing_box(direction, spacing))
-        log('leading', spacing)
+    # def _apply_leading_space(self, spacing: int) -> None:
+    #     if len(self._children) > 0:
+    #         if self._children[0].classes == 'fluxtual-spacing-box':
+    #             self._children.pop(0)
+    #     self._children.insert(0, _create_spacing_box(self.direction, spacing, 0))
 
     def _apply_spacing(self) -> None:
         # apply main spacing
         if self.direction == Axis.horizontal:
-            assert self.size.width is not None
-            free_space = self.size.width
+            children_width = sum(child.get_content_width(self.size, self.app.size) for child in self._children)\
+                + self.spacing * (len(self._children) - 1)
+            children_height = max(
+                child.get_content_height(
+                    self.size,
+                    self.app.size,
+                    child.get_content_width(self.size, self.app.size))
+                for child in self._children)
         else:
-            assert self.size.height is not None
-            free_space = self.size.height
+            children_width = max(child.get_content_width(self.size, self.app.size) for child in self._children)
+            children_height = sum(
+                child.get_content_height(
+                    self.size,
+                    self.app.size,
+                    child.get_content_width(self.size, self.app.size))
+                for child in self._children) + self.spacing * (len(self._children) - 1)
+
+        if self.direction == Axis.horizontal:
+            assert self._width is not None
+            free_space = self._width - children_width
+        else:
+            assert self._height is not None
+            free_space = self._height - children_height
 
         leading_space, between_space = self.main_axis_alignment._distribute_space(
             free_space,
@@ -98,25 +118,33 @@ class Flex(Widget):
         )
         if between_space > 0:
             self._apply_between_space(between_space)
-        if leading_space > 0:
-            self._apply_leading_space(leading_space, self.direction)
+        # replaced to padding
+        # if leading_space > 0:
+        #     self._apply_leading_space(leading_space)
 
         # apply cross spacing
         if self.direction == Axis.horizontal:
-            assert self.size.height is not None
-            free_space = self.size.height
+            assert self._height is not None
+            free_space = self._height - children_height
         else:
-            assert self.size.width is not None
-            free_space = self.size.width
-
-        leading_space = self.cross_axis_alignment._get_child_cross_axis_offest(
+            assert self._width is not None
+            free_space = self._width - children_width
+        cross_leading_space = self.cross_axis_alignment._get_child_cross_axis_offest(
             free_space,
             self.vertical_direction == VerticalDirection.up
         )
-        self._apply_leading_space(leading_space, flip_axis(self.direction))
+        if self.direction == Axis.horizontal:
+            self.styles.padding = (cross_leading_space, 0, 0, leading_space)
+        else:
+            self.styles.padding = (leading_space, 0, 0, cross_leading_space)
+        self.refresh(recompose=True)
+        self._laid_out = True
 
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
+        if self._laid_out == True:
+            assert self._width != None
+            return self._width
         if self.direction == Axis.horizontal:
             if self.main_axis_size == MainAxisSize.max:
                 return container.width
@@ -127,34 +155,29 @@ class Flex(Widget):
             return max((c.get_content_width(container, viewport) for c in self._children), default=0)
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
+        if self._laid_out == True:
+            assert self._height != None
+            return self._height
+        self._width = width
         if self.direction == Axis.vertical:
             if self.main_axis_size == MainAxisSize.max:
-                return container.height
-            return sum(
-                c.get_content_height(container, viewport, c.get_content_width(container, viewport))
-                for c in self._children
-            )
+                self._height = container.height
+            else:
+                self._height = sum(
+                    c.get_content_height(container, viewport, c.get_content_width(container, viewport))
+                    for c in self._children
+                )
         else:
-            if self.cross_axis_alignment == CrossAxisAlignment.stretch:
-                return container.height
-            return max(
-                (c.get_content_height(container, viewport, c.get_content_width(container, viewport))
-                for c in self._children),
-                default=0
-            )
-
-    async def _rebuild_host(self) -> None:
+            if self.cross_axis_alignment != CrossAxisAlignment.start:
+                self._height = container.height
+            else:
+                self._height = max(
+                    (c.get_content_height(container, viewport, c.get_content_width(container, viewport))
+                    for c in self._children),
+                    default=0
+                )
         self._apply_spacing()
-        self._host.remove_children()
-        await self._host.mount(*self._children)
-        self.refresh(layout=True)
+        return self._height
 
     def compose(self) -> ComposeResult:
-        yield self._host
-
-    async def on_mount(self) -> None:
-        await self._host.mount(*self._children) # firstly paint without spacing
-        self.call_after_refresh(self._rebuild_host)
-
-    async def watch_size(self, size: Size) -> None:
-        await self._rebuild_host()
+        yield from self._children
