@@ -4,7 +4,10 @@
 `fluxtual` brings a **Flutter-inspired API** to [Textual](https://github.com/Textualize/textual), aiming to provide a familiar, expressive, and scalable way to build terminal UIs.  
 It includes a **theme system**, ready-to-use widgets, strongly typed enums for styling, and utilities for layout and text rendering.
 
-> **⚠ Work in progress**  
+> [!WARNING]
+> This project is freezed/archived due i have no time. Maybe will continue work in summer.
+
+> [!WARNING]
 > This package is under active development. Expect frequent updates, breaking changes, and a growing set of widgets, helpers, and theming capabilities.
 
 ## ✨ Features
