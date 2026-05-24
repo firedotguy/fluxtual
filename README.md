@@ -5,7 +5,7 @@
 It includes a **theme system**, ready-to-use widgets, strongly typed enums for styling, and utilities for layout and text rendering.
 
 > [!WARNING]
-> This project is freezed/archived due i have no time. Maybe will continue work in summer.
+> oh for me now it looks a bit embarassing.. (it is a bit vibecoded (not a bit)). I swear anything will be refactored after i finish itd-sdk and textual-video. i think it is very cool project !!
 
 > [!WARNING]
 > This package is under active development. Expect frequent updates, breaking changes, and a growing set of widgets, helpers, and theming capabilities.
